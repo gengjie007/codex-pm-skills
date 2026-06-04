@@ -156,7 +156,7 @@ screenshot_dir: "/absolute/path/to/release-screenshots"
 ## Rendering Notes
 
 - Keep `version` and `topic` stable across every section.
-- Use absolute local image paths when the output should embed renderable Markdown images.
+- Use absolute local image paths as structured input; render output images as base64 data URIs so copied Markdown/email content preserves images when pasted into a document.
 - Omit `sections` if the email only needs a summary and table.
 - In screenshot-first mode, infer content first, then convert it into the standard table and section structure.
 - In screenshot-directory mode, collect image paths first, then follow the same inference flow as screenshot-first mode.

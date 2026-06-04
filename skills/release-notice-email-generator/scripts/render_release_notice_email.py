@@ -4,7 +4,9 @@
 from __future__ import annotations
 
 import argparse
+import base64
 import json
+import mimetypes
 from collections import OrderedDict
 from pathlib import Path
 from typing import Any
@@ -47,6 +49,17 @@ def require_fields(data: dict[str, Any], fields: list[str]) -> None:
 
 def sanitize(value: Any) -> str:
     return str(value).replace("|", "\\|").strip()
+
+
+def image_to_data_uri(path_value: str) -> str:
+    if path_value.startswith("data:image/"):
+        return path_value
+    path = Path(path_value).expanduser()
+    if not path.exists() or not path.is_file():
+        raise FileNotFoundError(f"Image file does not exist: {path_value}")
+    mime_type = mimetypes.types_map.get(path.suffix.lower(), "application/octet-stream")
+    encoded = base64.b64encode(path.read_bytes()).decode("ascii")
+    return f"data:{mime_type};base64,{encoded}"
 
 
 def to_chinese_number(number: int) -> str:
@@ -143,7 +156,7 @@ def render_sections(sections: list[dict[str, Any]]) -> list[str]:
             if not path:
                 continue
             alt = caption or title
-            lines.append(f"![{alt}]({path})")
+            lines.append(f"![{alt}]({image_to_data_uri(path)})")
             if caption:
                 lines.append("")
                 lines.append(caption)

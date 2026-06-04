@@ -120,6 +120,7 @@ Read [references/template-structure.md](references/template-structure.md) before
 - Keep terminology consistent across subject, table, and detail sections.
 - Prefer concise business writing over marketing copy.
 - Use screenshots only when they add value; omit them in chat output if the user did not provide any.
+- Every output image in inline, Markdown, or HTML-style email content must be embedded as a base64 data URI, for example `![规则配置页面](data:image/png;base64,...)`. Do not output local file paths, relative paths, remote URLs, or `file://` links for images. The user must be able to `Ctrl+A` copy the rendered email and paste it into a document with images preserved.
 - Use `[待补截图]` only in draft files that are clearly incomplete.
 
 ## Example Requests

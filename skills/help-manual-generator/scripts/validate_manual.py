@@ -4,11 +4,11 @@
 from __future__ import annotations
 
 import argparse
-import posixpath
+import base64
+import binascii
 import re
 import zipfile
 from pathlib import Path
-from urllib.parse import unquote, urlparse
 
 
 SUPPORTED_EXTENSIONS = {
@@ -25,60 +25,41 @@ SUPPORTED_EXTENSIONS = {
 IMAGE_RE = re.compile(r"!\[[^\]]*\]\(([^)]+)\)")
 
 
-def is_url(target: str) -> bool:
-    parsed = urlparse(target)
-    return parsed.scheme in {"http", "https", "data"}
-
-
-def is_relative_to(path: Path, base: Path) -> bool:
+def validate_data_image(target: str) -> str | None:
+    if not target.startswith("data:image/"):
+        return "Markdown image is not a base64 data URI: " + target[:80]
+    header, separator, payload = target.partition(",")
+    if not separator or ";base64" not in header:
+        return "Markdown data image is missing a base64 payload: " + target[:80]
     try:
-        path.resolve().relative_to(base.resolve())
-        return True
-    except ValueError:
-        return False
+        base64.b64decode(payload, validate=True)
+    except (binascii.Error, ValueError):
+        return "Markdown data image contains invalid base64: " + target[:80]
+    return None
 
 
-def screenshot_names(screenshot_dir: Path) -> set[str]:
-    return {
-        item.name
-        for item in screenshot_dir.rglob("*")
-        if item.is_file() and item.suffix.lower() in SUPPORTED_EXTENSIONS
-    }
-
-
-def validate_markdown(manual: Path, screenshot_dir: Path) -> list[str]:
+def validate_markdown(manual: Path, _screenshot_dir: Path) -> list[str]:
     errors: list[str] = []
     text = manual.read_text(encoding="utf-8")
     refs = [match.strip().split()[0].strip("<>\"'") for match in IMAGE_RE.findall(text)]
     if not refs:
         return ["Markdown manual contains no image references."]
 
-    names = screenshot_names(screenshot_dir)
-    local_refs = []
-    matched_screenshots = []
+    data_refs = []
+    non_data_refs = []
     for ref in refs:
-        if is_url(ref):
+        if ref.startswith("data:"):
+            data_refs.append(ref)
+            error = validate_data_image(ref)
+            if error:
+                errors.append(error)
             continue
-        decoded = unquote(ref)
-        if decoded.startswith("file://"):
-            decoded = urlparse(decoded).path
-        candidate = Path(decoded)
-        if not candidate.is_absolute():
-            candidate = (manual.parent / decoded).resolve()
-        local_refs.append(candidate)
-        normalized_parts = [part for part in Path(decoded).parts if part not in {".", ""}]
-        if candidate.exists() and (is_relative_to(candidate, screenshot_dir) or candidate.name in names):
-            matched_screenshots.append(candidate)
-        elif posixpath.basename(decoded) in names:
-            matched_screenshots.append(candidate)
+        non_data_refs.append(ref)
 
-    if not local_refs:
-        errors.append("Markdown manual only contains remote/data images; use local screenshots from the provided directory.")
-    missing = [str(path) for path in local_refs if not path.exists()]
-    if missing:
-        errors.append("Missing local image files: " + ", ".join(missing[:10]))
-    if not matched_screenshots:
-        errors.append("No image reference appears to come from the provided screenshot directory.")
+    if not data_refs:
+        errors.append("Markdown manual contains no base64 data URI images.")
+    if non_data_refs:
+        errors.append("Markdown manual image references must be base64 data URIs, not paths or URLs: " + ", ".join(non_data_refs[:10]))
     return errors
 
 

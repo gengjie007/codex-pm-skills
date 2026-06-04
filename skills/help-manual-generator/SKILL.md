@@ -11,7 +11,8 @@ description: 帮助手册生成器。用于根据用户提供的产品截图目�
 - Use screenshots from that directory in the final manual. If no supported images are found, stop and report that the screenshot directory is empty or unsupported.
 - Default output to `帮助手册.md` unless the user requests Word output. For Word requests, create `.docx` even if the user says `.doc`.
 - Do not invent pricing, limits, product architecture, or feature capabilities that are not visible in screenshots or provided by the user. Mark missing business details as `待补充` only when the section is needed.
-- Keep image paths working. For Markdown output, copy or reference images with relative paths from the manual file. For `.docx`, embed the actual image files.
+- For Markdown/chat/HTML-style output, every output image must be embedded as a base64 data URI, for example `![创建实例页面](data:image/png;base64,...)`. Do not use local file paths, relative paths, remote URLs, or `file://` links for output images. The user must be able to `Ctrl+A` copy the rendered content and paste it into a document with images preserved.
+- For `.docx`, embed the actual image files in the Word document.
 
 ## 资源
 
@@ -43,7 +44,7 @@ python3 /path/to/help-manual-generator/scripts/collect_screenshots.py "/path/to/
    - Use bullets for field explanations and tables for structured limits or parameter definitions.
    - Use exact visible UI labels when possible, wrapped with Chinese corner quotes or bold text, for example `点击「创建」` or `点击 **确定**`.
 6. Generate the requested output:
-   - Markdown: create `帮助手册.md` unless the user provided a target path. Use relative image links such as `![创建实例页面](screenshots/create-instance.png)`.
+   - Markdown: create `帮助手册.md` unless the user provided a target path. Convert each screenshot into a base64 data URI and use image links such as `![创建实例页面](data:image/png;base64,...)`.
    - Word: create `.docx` with embedded screenshots, captions, headings, numbered steps, and tables. If document tooling is available, use it; otherwise create Markdown first and convert to `.docx` with a reliable local converter.
 7. Validate the output with:
 
