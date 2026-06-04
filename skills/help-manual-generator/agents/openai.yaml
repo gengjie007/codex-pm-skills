@@ -1,0 +1,4 @@
+interface:
+  display_name: "帮助手册生成器"
+  short_description: "根据产品截图生成中文帮助手册"
+  default_prompt: "使用 $help-manual-generator 根据这个产品截图目录生成中文帮助手册。"

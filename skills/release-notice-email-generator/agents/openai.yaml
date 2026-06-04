@@ -1,0 +1,4 @@
+interface:
+  display_name: "发版通知邮件生成器"
+  short_description: "基于产品发版信息、更新列表和截图生成标准发版通知邮件"
+  default_prompt: "Use $release-notice-email-generator to draft a structured release announcement email from version details, change items, and screenshots."

@@ -1,0 +1,4 @@
+interface:
+  display_name: "PRD Product Manager"
+  short_description: "Draft and review execution-ready PRDs"
+  default_prompt: "Use $prd-product-manager to produce a Chinese team-style PRD with fixed sections, requirement tables."
