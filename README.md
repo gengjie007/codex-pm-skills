@@ -55,7 +55,6 @@ cp -R /tmp/codex-pm-skills/skills/help-manual-generator ~/.codex/skills/help-man
 
 更新 3 个 skills 的强制输出格式要求：
 
-- Markdown、chat、HTML 风格输出中的图片必须使用 base64 data URI。
 - 禁止在输出图片中使用本地路径、相对路径、远程 URL 或 `file://` 链接。
 - 目标是让用户可以 `Ctrl+A` 复制渲染内容并粘贴到文档中，同时保留图片。
 
