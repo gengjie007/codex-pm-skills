@@ -11,6 +11,7 @@
 | `prd-product-manager` | 根据原型截图、HTML 页面、UI 设计稿或简单描述，生成标准中文 PRD。 | `skills/prd-product-manager` |
 | `release-notice-email-generator` | 根据版本号、更新列表、产品链接和截图，生成中文发版通知邮件。 | `skills/release-notice-email-generator` |
 | `help-manual-generator` | 根据产品截图目录生成中文帮助手册、产品手册、操作指南或知识库文档。 | `skills/help-manual-generator` |
+| `gitlab-self-hosted` | 连接自托管 GitLab，管理项目、仓库、Issue、合并请求和 CI/CD。 | `skills/gitlab-self-hosted` |
 
 ## Install With Codex
 
@@ -71,3 +72,52 @@ cp -R /tmp/codex-pm-skills/skills/help-manual-generator ~/.codex/skills/help-man
 ## License
 
 No license file is provided. All rights are reserved by default unless the repository owner adds a license later.
+
+
+## gitlab-self-hosted：自托管 GitLab 协作
+
+通过 GitLab REST API 连接用户自己的 GitLab 实例，适用于项目和仓库查询、分支与提交查看、Issue 管理、合并请求以及流水线和任务管理。该技能默认面向自托管 GitLab，不用于 GitHub；GitLab.com 需要用户明确配置。
+
+### 安装
+
+在 Codex 中输入：
+
+```text
+请从这个 GitHub 地址安装 Codex skill：
+https://github.com/gengjie007/codex-pm-skills/tree/main/skills/gitlab-self-hosted
+```
+
+或在克隆本仓库后，手动复制：
+
+```bash
+cp -R /tmp/codex-pm-skills/skills/gitlab-self-hosted ~/.codex/skills/gitlab-self-hosted
+```
+
+### 连接配置
+
+在运行 Codex 的环境中设置 `GITLAB_URL`（实例根地址，例如 `https://gitlab.example.com`）和 `GITLAB_TOKEN`（访问令牌）。如果实例使用私有 CA，可设置 `GITLAB_CA_BUNDLE` 指向 PEM 证书文件。
+
+令牌应通过本机安全方式配置，不要粘贴到聊天、写入仓库或放入命令参数。脚本从环境变量读取凭据，不保存凭据，不关闭 TLS 校验。按任务使用最小必要权限：只读操作通常使用 `read_api`，写入操作通常需要 `api`，同时受项目角色和实例策略限制。
+
+### 使用示例
+
+```text
+使用 $gitlab-self-hosted 查看我的自托管 GitLab 项目和最近提交。
+```
+
+```text
+使用 $gitlab-self-hosted 查询指定项目中未关闭的 Issue，并整理优先处理清单。
+```
+
+```text
+使用 $gitlab-self-hosted 检查指定项目最近失败的流水线和任务。
+```
+
+技能会先核验实例版本及当前身份，读取目标状态，再执行请求并复核结果。删除资源、强制更新引用、修改可见性或成员权限、轮换凭据及触发生产部署等高风险操作需要明确确认。
+
+### 文件说明
+
+- [SKILL.md](skills/gitlab-self-hosted/SKILL.md)：触发条件、连接方式和操作流程。
+- [scripts/gitlab_api.py](skills/gitlab-self-hosted/scripts/gitlab_api.py)：基于 Python 3 标准库的 REST API 客户端，支持分页、JSON 请求和项目 ID 查询。
+- [references/api-guide.md](skills/gitlab-self-hosted/references/api-guide.md)：常用接口、参数编码、分页及权限说明。
+- [agents/openai.yaml](skills/gitlab-self-hosted/agents/openai.yaml)：Codex 展示名称和默认提示词。

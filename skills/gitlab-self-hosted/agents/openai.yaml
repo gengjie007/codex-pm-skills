@@ -1,0 +1,4 @@
+interface:
+  display_name: "GitLab（Self）"
+  short_description: "Connect to and operate your self-hosted GitLab"
+  default_prompt: "Use $gitlab-self-hosted to inspect my GitLab projects and help manage issues, merge requests, and pipelines."
