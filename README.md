@@ -8,7 +8,7 @@
 
 | Skill | 用途 | 安装路径 |
 | --- | --- | --- |
-| `prd-product-manager` | 根据原型截图、HTML 页面、UI 设计稿或简单描述，生成标准中文 PRD。 | `skills/prd-product-manager` |
+| `prd-product-manager` | 根据原型、截图和需求附件生成或修订产品需求规格，默认交付可离线打开的 `spec.html`。 | `skills/prd-product-manager` |
 | `release-notice-email-generator` | 根据版本号、更新列表、产品链接和截图，生成中文发版通知邮件。 | `skills/release-notice-email-generator` |
 | `help-manual-generator` | 根据产品截图目录生成中文帮助手册、产品手册、操作指南或知识库文档。 | `skills/help-manual-generator` |
 | `gitlab-self-hosted` | 连接自托管 GitLab，管理项目、仓库、Issue、合并请求和 CI/CD。 | `skills/gitlab-self-hosted` |
@@ -50,9 +50,38 @@ cp -R /tmp/codex-pm-skills/skills/help-manual-generator ~/.codex/skills/help-man
 
 如果只需要其中一个 skill，只复制对应目录即可。
 
+## prd-product-manager：产品需求规格
+
+根据原型 URL、HTML 或项目路径，由 Agent 操作并采集截图；也可直接提供粘贴或上传的截图、图片目录和需求附件。两种方式可混用。技能会梳理功能、规则、权限与验收，按需求 ID 建立截图和验收的对应关系，形成供研发拆解 `plan.md` 的规格。
+
+默认交付单个中文 `spec.html`，图片内嵌，可离线打开，支持目录、打印、截图放大和窄屏阅读。用户可指定文件名、位置、语言或其他格式；修订现有规格时保留已确认内容。复制到其他编辑器后图片是否保留取决于目标编辑器。
+
+使用示例：
+
+```text
+使用 $prd-product-manager，根据这个原型地址和需求附件生成产品需求规格，输出 spec.html。
+```
+
+```text
+使用 $prd-product-manager，根据我上传的截图和说明修订现有规格；缺失的信息请标明。
+```
+
+技能通过 [章节规范](skills/prd-product-manager/references/prd-template.md)、[截图输入与核验规范](skills/prd-product-manager/references/screenshot-inputs.md)和 [HTML 模板](skills/prd-product-manager/assets/spec-template.html)组织内容，并使用 [校验脚本](skills/prd-product-manager/scripts/validate_spec.py)检查结构、锚点、图片内嵌和验收标识。脚本不能代替业务判断及浏览器视觉检查；关键素材不足时，结果应标为未完成草稿并说明缺口。
+
+## 更新说明
+
+### 2026-11-03：prd-product-manager
+
+- 将默认交付更新为可离线打开、截图内嵌的单文件 HTML 产品需求规格，支持修订既有规格。
+- 支持 Agent 操作原型截图及用户提供截图两种输入，补充截图匹配、缺失材料和事实来源的核验要求。
+- 按功能建立需求 ID、截图、规则和可验证验收的对应关系，补充权限、状态和研发计划拆解要求。
+- 新增 HTML 模板、截图规范及结构校验脚本，并更新技能展示名称和默认提示词。
+
 ## First Release Notes
 
 ### v1.0.1
+
+以下为历史发布记录；`prd-product-manager` 的现行行为以上方更新说明和技能文件为准。
 
 更新 3 个 skills 的强制输出格式要求：
 

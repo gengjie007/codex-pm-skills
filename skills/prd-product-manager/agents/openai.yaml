@@ -1,4 +1,4 @@
 interface:
-  display_name: "PRD Product Manager"
-  short_description: "Draft and review execution-ready PRDs"
-  default_prompt: "Use $prd-product-manager to produce a Chinese team-style PRD with fixed sections, requirement tables."
+  display_name: "产品需求规格 · Spec HTML"
+  short_description: "通过Agent原型截图或人工图片生成可供研发拆解计划的独立HTML需求规格"
+  default_prompt: "使用 $prd-product-manager，根据当前原型自行截图或我提供的图片与附件，生成含逐功能截图、业务规则、权限、验收标准和研发交接要求的 spec.html 文件。"
